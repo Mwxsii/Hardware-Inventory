@@ -57,10 +57,9 @@ const CreatePurchasesModal = ({ isOpen, onClose }: CreatePurchasesModalProps) =>
     description: "", 
   });
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    
     if (name === "supplierName") {
       setFormData({
         ...formData,
@@ -81,26 +80,22 @@ const CreatePurchasesModal = ({ isOpen, onClose }: CreatePurchasesModalProps) =>
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    
     if (!allowedSuppliers.includes(formData.supplierName)) {
       alert("Supplier name must be one of the following: " + allowedSuppliers.join(", "));
       return;
     }
 
-    
     if (isNaN(formData.purchasePrice) || formData.purchasePrice < 0) {
       alert("Purchase price must be a valid number and cannot be negative.");
       return;
     }
 
-    
     if (isNaN(formData.quantityPurchased) || formData.quantityPurchased < 0) {
       alert("Quantity purchased must be a valid number and cannot be negative.");
       return;
     }
 
     try {
-      
       await addDoc(collection(db, "purchases"), {
         purchaseId: formData.purchaseId,
         supplierName: formData.supplierName,
@@ -111,7 +106,6 @@ const CreatePurchasesModal = ({ isOpen, onClose }: CreatePurchasesModalProps) =>
         date: new Date().toISOString(),
       });
 
-      
       await addDoc(collection(db, "inventory"), {
         supplierName: formData.supplierName,
         description: formData.description.toUpperCase(),
@@ -125,7 +119,7 @@ const CreatePurchasesModal = ({ isOpen, onClose }: CreatePurchasesModalProps) =>
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Failed to create purchase:', error.message);
-      } else {
+            } else {
         console.error('Failed to create purchase:', error);
       }
       alert("Failed to create purchase. Please try again.");
